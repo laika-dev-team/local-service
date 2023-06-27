@@ -43,6 +43,8 @@ const receiptPrint = (buffer: Buffer): Promise<void> => {
 ;(function () {
   const _logger = getLogger('main-service')
   const app = Express.default()
+  app.use(Express.json())
+  app.use(Express.urlencoded({ extended: true }))
   app.post('/print', async (req, res) => {
     try {
       const html = req.body.html
