@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@posprint/command-builder": "^0.0.43",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "escpos": "^3.0.0-alpha.6",
     "express": "^4.18.2",

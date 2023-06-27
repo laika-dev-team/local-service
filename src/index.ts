@@ -11,7 +11,9 @@ function typeOf(obj: any): string | undefined {
 }
 
 const html2CmdBuffer = async (html: string) => {
-  const jsonTree = parse(html)
+  // const content = parse(html)
+  const jsonTree = html
+  console.log(jsonTree)
   const cmd = await buildCommand(jsonTree, {
     type: 'esc',
     encoding: 'UTF-8',
@@ -33,6 +35,7 @@ const receiptPrint = (buffer: Buffer): Promise<void> => {
       }
       const options = { encoding: 'GB18030' }
       const printer = new escpos.Printer(device, options)
+      console.log(buffer.toString())
       printer.print(buffer)
       printer.close()
       resolve()
@@ -45,6 +48,7 @@ const receiptPrint = (buffer: Buffer): Promise<void> => {
   const app = Express.default()
   app.use(Express.json())
   app.use(Express.urlencoded({ extended: true }))
+  app.use(require('cors'))
   app.post('/print', async (req, res) => {
     try {
       const html = req.body.html
@@ -52,10 +56,11 @@ const receiptPrint = (buffer: Buffer): Promise<void> => {
         _logger.error(req.body, 'html property not exist')
         res.status(400).send({ status: false, error: 'HTML_IS_REQUIRED' })
       }
-      if (typeOf(html) !== 'String') {
-        _logger.error(req.body, 'html property is not a string')
-        res.status(400).send({ status: false, error: 'HTML_MUST_BE_STRING' })
-      }
+      // if (typeOf(html) !== 'String') {
+      //   _logger.error(req.body, 'html property is not a string')
+      //   res.status(400).send({ status: false, error: 'HTML_MUST_BE_STRING' })
+      // }
+      console.log(html)
       const cmdBuf = await html2CmdBuffer(html)
       await receiptPrint(cmdBuf)
       res.status(200).send({ status: true })
