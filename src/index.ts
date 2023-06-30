@@ -48,7 +48,7 @@ const receiptPrint = (buffer: Buffer): Promise<void> => {
   const app = Express.default()
   app.use(Express.json())
   app.use(Express.urlencoded({ extended: true }))
-  app.use(require('cors'))
+  app.use(require('cors')({ origin: '*' }))
   app.post('/print', async (req, res) => {
     try {
       const html = req.body.html
