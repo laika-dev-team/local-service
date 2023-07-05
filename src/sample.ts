@@ -1,9 +1,6 @@
+import { ReceiptTemplateData, OrderPayTypeEnum } from 'dto'
 import { executePrinter } from 'lib'
-import {
-  OrderPayTypeEnum,
-  ReceiptTemplateData,
-  printReceipt,
-} from 'template/receipt'
+import { printReceipt } from 'template/receipt'
 
 const data: ReceiptTemplateData = {
   store: {

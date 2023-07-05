@@ -6,9 +6,9 @@ export type JobQueueConfig = {
   maxRetry?: number
 }
 
-export class JobQueue<T extends { id: number; retry?: number }> {
-  private _queue: T[] = []
-  private _dlQueue: T[] = []
+export class JobQueue<T> {
+  private _queue: (T & { id: number; retry?: number })[] = []
+  private _dlQueue: (T & { id: number; retry?: number })[] = []
   private _logger
   private _timerId: NodeJS.Timeout | undefined
   private _isStop = false
@@ -20,13 +20,18 @@ export class JobQueue<T extends { id: number; retry?: number }> {
     this._logger = getLogger(`job-queue-${this._name}`)
   }
 
+  get name() {
+    return this._name
+  }
+
   append = (data: Omit<T, 'id'>) => {
+    // this._logger.info(data, 'append job to queue')
     this._queue.push({ ...data, id: Date.now(), retry: undefined } as any)
     this.intervalExecute()
   }
 
   start = () => {
-    this._isStop = true
+    this._isStop = false
     this.intervalExecute()
   }
 
@@ -39,25 +44,31 @@ export class JobQueue<T extends { id: number; retry?: number }> {
 
   private execute = async () => {
     if (this._queue.length === 0) {
+      this._timerId = undefined
       this.intervalExecute()
+      return
     }
     const data = this._queue.shift()
     try {
       assert(data, 'data must exist')
+      // this._logger.debug(data, 'execute job')
       await this._action(data)
     } catch (e) {
       this._logger.error(e, 'process error ')
       assert(data, 'data must exist')
       this.onJobFailed(data)
     } finally {
+      this._timerId = undefined
       this.intervalExecute()
     }
   }
 
   private intervalExecute = () => {
+    // this._logger.debug('interval execute ', this._isStop)
     if (this._isStop) {
       return
     }
+    // this._logger.debug(this._timerId, 'interval execute queue')
     if (!this._timerId) {
       const interval =
         this._config && this._config.jobIntervalMs
@@ -67,7 +78,7 @@ export class JobQueue<T extends { id: number; retry?: number }> {
     }
   }
 
-  private onJobFailed = (data: T) => {
+  private onJobFailed = (data: T & { id: number; retry?: number }) => {
     if (!this._config) {
       this._dlQueue.push(data)
       return
@@ -86,7 +97,10 @@ export class JobQueue<T extends { id: number; retry?: number }> {
       return
     }
 
-    const job: T = { ...data, retry: data.retry ? data.retry + 1 : 1 }
+    const job: T & { id: number; retry?: number } = {
+      ...data,
+      retry: data.retry ? data.retry + 1 : 1,
+    }
     return this._queue.push(job)
   }
 }

@@ -12,4 +12,9 @@ export const NAMESPACE = 'laika-local-printer'
 export const LOG_LEVEL = process.env.LOG_LEVEL || 'info'
 export const DEBUG = process.env.DEBUG === 'true'
 export const PORT = parseInt(process.env.PORT || '5556')
-export const PRINTER_URI = process.env.PRINTER_URI || 'tcp://127.0.0.2:9100'
+export const SWAGGER_ENDPOINT = process.env.SWAGGER_ENDPOINT
+export const PRINTERS = (process.env.PRINTERS || 'tcp://192.168.1.234').split(
+  ';'
+)
+export const JOB_INTERVAL_MS = parseInt(process.env.JOB_INTERVAL_MS || '250')
+export const STORE_ID = parseInt(process.env.STORE_ID || '0')

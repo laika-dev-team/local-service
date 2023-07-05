@@ -1,3 +1,4 @@
+import { getLogger } from 'helper'
 import {
   BreakLine,
   CharacterSet,
@@ -5,6 +6,7 @@ import {
   ThermalPrinter,
 } from 'node-thermal-printer'
 
+const logger = getLogger('printer')
 export async function executePrinter<T>(
   uri: string,
   data: T,
@@ -21,6 +23,10 @@ export async function executePrinter<T>(
       timeout: 5000,
     },
   })
+  const isConnected = await printer.isPrinterConnected()
+  if (!isConnected) {
+    throw new Error('PRINTER_IS_NOT_CONNECTEd')
+  }
   await printTemplate(printer, data)
-  return printer.execute()
+  await printer.execute()
 }
