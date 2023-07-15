@@ -24,7 +24,13 @@ export type ReceiptTemplateData = {
     hotline: string
   }
   receiptId?: string
-  items: { name: string; quantity: number; unitPrice: number; price: number }[]
+  items: {
+    name: string
+    quantity: number
+    unitPrice: number
+    price: number
+    toppings?: { name: string; quantity: number; unitPrice: number }[]
+  }[]
   totalPrice: number
   pay: {
     type: OrderPayTypeEnum

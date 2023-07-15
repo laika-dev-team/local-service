@@ -19,6 +19,13 @@ const data: ReceiptTemplateData = {
       quantity: 1,
       unitPrice: 49000,
       price: 49000,
+      toppings: [
+        {
+          name: 'chân châu',
+          unitPrice: 0,
+          quantity: 1,
+        },
+      ],
     },
     {
       name: 'Very bery yogurt',

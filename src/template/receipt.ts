@@ -51,6 +51,21 @@ export async function printReceipt(
       { align: 'RIGHT', width: 0.2, text: `${t.unitPrice}` },
       { align: 'RIGHT', width: 0.2, text: `${t.price}` },
     ])
+    if (t.toppings) {
+      t.toppings.forEach((t) => {
+        printer.tableCustom([
+          { align: 'RIGHT', width: 0.05, text: ` ` },
+          {
+            align: 'CENTER',
+            width: 0.35,
+            text: removeVietnameseTones(`+ ${t.name}`),
+          },
+          { align: 'RIGHT', width: 0.1, text: `${t.quantity}` },
+          { align: 'RIGHT', width: 0.2, text: `${t.unitPrice}` },
+          { align: 'RIGHT', width: 0.2, text: `0` },
+        ])
+      })
+    }
   })
   printer.drawLine()
   printer.tableCustom([

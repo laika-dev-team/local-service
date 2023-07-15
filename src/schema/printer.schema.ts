@@ -18,6 +18,15 @@ export const receiptPrintPayload = z.object({
       quantity: z.number(),
       unitPrice: z.number(),
       price: z.number(),
+      toppings: z
+        .array(
+          z.object({
+            name: z.string().nonempty(),
+            quantity: z.number(),
+            unitPrice: z.number(),
+          })
+        )
+        .optional(),
     })
   ),
   pay: z.object({
