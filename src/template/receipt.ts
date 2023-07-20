@@ -32,7 +32,7 @@ export async function printReceipt(
   )
   printer.drawLine()
   printer.tableCustom([
-    { align: 'CENTER', width: 0.05, text: removeVietnameseTones('TT') },
+    // { align: 'CENTER', width: 0.05, text: removeVietnameseTones('TT') },
     { align: 'CENTER', width: 0.3, text: removeVietnameseTones('Tên món') },
     { align: 'CENTER', width: 0.1, text: removeVietnameseTones('SL') },
     { align: 'CENTER', width: 0.2, text: removeVietnameseTones('Đ.Giá') },
@@ -42,7 +42,7 @@ export async function printReceipt(
   printer.drawLine()
   data.items.forEach((t, i) => {
     printer.tableCustom([
-      { align: 'RIGHT', width: 0.05, text: `${i + 1}` },
+      // { align: 'RIGHT', width: 0.05, text: `${i + 1}` },
       {
         align: 'CENTER',
         width: 0.3,
@@ -60,15 +60,20 @@ export async function printReceipt(
     if (t.toppings) {
       t.toppings.forEach((t) => {
         printer.tableCustom([
-          { align: 'RIGHT', width: 0.05, text: ` ` },
+          // { align: 'RIGHT', width: 0.05, text: ` ` },
           {
             align: 'CENTER',
-            width: 0.35,
+            width: 0.3,
             text: removeVietnameseTones(`+ ${t.name}`),
           },
           { align: 'RIGHT', width: 0.1, text: `${t.quantity}` },
           { align: 'RIGHT', width: 0.2, text: `${t.unitPrice}` },
-          { align: 'RIGHT', width: 0.2, text: `0` },
+          {
+            align: 'RIGHT',
+            width: 0.1,
+            text: `0`,
+          },
+          { align: 'RIGHT', width: 0.1, text: `0` },
         ])
       })
     }
