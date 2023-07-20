@@ -5,6 +5,14 @@ export function convertToWpc1258(str: string) {
   return iconv.convert(str)
 }
 
+export function currencyToString(number: number): string {
+  let data = `${number}`
+  if (number > 10000) {
+    data = `${Math.round(number / 1000)}k`
+  }
+  return data
+}
+
 export function removeVietnameseTones(str: string) {
   str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a')
   str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e')

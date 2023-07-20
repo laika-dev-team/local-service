@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { ThermalPrinter } from 'node-thermal-printer'
-import { removeVietnameseTones } from 'helper/string'
+import { currencyToString, removeVietnameseTones } from 'helper/string'
 import { receiptPrintPayload } from 'schema'
 import { ReceiptTemplateData, orderPayToText } from 'dto'
 import { getLogger } from 'helper'
@@ -32,10 +32,11 @@ export async function printReceipt(
   )
   printer.drawLine()
   printer.tableCustom([
-    { align: 'CENTER', width: 0.1, text: removeVietnameseTones('TT') },
-    { align: 'CENTER', width: 0.4, text: removeVietnameseTones('Tên món') },
+    { align: 'CENTER', width: 0.05, text: removeVietnameseTones('TT') },
+    { align: 'CENTER', width: 0.3, text: removeVietnameseTones('Tên món') },
     { align: 'CENTER', width: 0.1, text: removeVietnameseTones('SL') },
     { align: 'CENTER', width: 0.2, text: removeVietnameseTones('Đ.Giá') },
+    { align: 'CENTER', width: 0.1, text: removeVietnameseTones('C.Khấu') },
     { align: 'CENTER', width: 0.2, text: removeVietnameseTones('T.Tiền') },
   ])
   printer.drawLine()
@@ -44,12 +45,17 @@ export async function printReceipt(
       { align: 'RIGHT', width: 0.05, text: `${i + 1}` },
       {
         align: 'CENTER',
-        width: 0.35,
+        width: 0.3,
         text: removeVietnameseTones(`${t.name}`),
       },
       { align: 'RIGHT', width: 0.1, text: `${t.quantity}` },
-      { align: 'RIGHT', width: 0.2, text: `${t.unitPrice}` },
-      { align: 'RIGHT', width: 0.2, text: `${t.price}` },
+      { align: 'RIGHT', width: 0.2, text: `${currencyToString(t.unitPrice)}` },
+      {
+        align: 'RIGHT',
+        width: 0.1,
+        text: `${t.discount ? `${t.discount}%` : 0}`,
+      },
+      { align: 'RIGHT', width: 0.2, text: `${currencyToString(t.price)}` },
     ])
     if (t.toppings) {
       t.toppings.forEach((t) => {
@@ -72,13 +78,33 @@ export async function printReceipt(
     {
       align: 'LEFT',
       width: 0.5,
-      text: removeVietnameseTones('Thành tiền'),
+      text: removeVietnameseTones('Tổng tiền'),
       bold: true,
     },
     {
       align: 'RIGHT',
       width: 0.5,
-      text: removeVietnameseTones(`${data.totalPrice}`),
+      text: removeVietnameseTones(`${data.rawPrice}`),
+      bold: true,
+    },
+  ])
+  printer.tableCustom([
+    {
+      align: 'LEFT',
+      width: 0.1,
+      text: removeVietnameseTones('+'),
+      bold: true,
+    },
+    {
+      align: 'LEFT',
+      width: 0.4,
+      text: removeVietnameseTones('Chiết khấu'),
+      bold: true,
+    },
+    {
+      align: 'RIGHT',
+      width: 0.4,
+      text: removeVietnameseTones(`${data.discount ? `${data.discount}%` : 0}`),
       bold: true,
     },
   ])

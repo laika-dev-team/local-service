@@ -37,9 +37,12 @@ const data: ReceiptTemplateData = {
       name: 'Cà phê kem sữa',
       quantity: 1,
       unitPrice: 35000,
+      discount: 10,
       price: 35000,
     },
   ],
+  discount: 8,
+  rawPrice: 400000,
   totalPrice: 392000,
   pay: {
     type: OrderPayTypeEnum.CASH,

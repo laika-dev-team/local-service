@@ -30,8 +30,11 @@ export type ReceiptTemplateData = {
     unitPrice: number
     price: number
     toppings?: { name: string; quantity: number; unitPrice: number }[]
+    discount?: number
   }[]
+  rawPrice: number
   totalPrice: number
+  discount?: number
   pay: {
     type: OrderPayTypeEnum
     receive: number

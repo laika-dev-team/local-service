@@ -8,6 +8,8 @@ export const receiptPrintPayload = z.object({
   zone: z.string(),
   table: z.string(),
   totalPrice: z.number(),
+  rawPrice: z.number(),
+  discount: z.number().optional(),
   store: z.object({
     address: z.string().nonempty(),
     hotline: z.string().nonempty(),
@@ -18,6 +20,7 @@ export const receiptPrintPayload = z.object({
       quantity: z.number(),
       unitPrice: z.number(),
       price: z.number(),
+      discount: z.number().optional(),
       toppings: z
         .array(
           z.object({
