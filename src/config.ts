@@ -16,5 +16,8 @@ export const SWAGGER_ENDPOINT = process.env.SWAGGER_ENDPOINT
 export const PRINTERS = (
   process.env.PRINTERS || 'tcp://192.168.1.234:9100'
 ).split(';')
+export const STAMP_PRINTERS = (
+  process.env.STAMP_PRINTERS || 'tcp://192.168.1.100:9100'
+).split(';')
 export const JOB_INTERVAL_MS = parseInt(process.env.JOB_INTERVAL_MS || '250')
 export const STORE_ID = parseInt(process.env.STORE_ID || '0')

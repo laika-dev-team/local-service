@@ -5,6 +5,8 @@ import {
   PrinterTypes,
   ThermalPrinter,
 } from 'node-thermal-printer'
+import * as net from 'net'
+import * as url from 'url'
 
 const logger = getLogger('printer')
 export async function executePrinter<T>(
@@ -29,4 +31,27 @@ export async function executePrinter<T>(
   }
   await printTemplate(printer, data)
   await printer.execute()
+}
+
+export function executeRawPrinter(
+  uri: string,
+  cmds: string[]
+): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    const endpoint = new url.URL(uri)
+    const client = new net.Socket()
+    client.on('error', (e) => {
+      logger.error(e, `connect to printer ${e} error`)
+      reject(e)
+    })
+    client.on('end', () => {
+      logger.info(`connection close ${uri}`)
+      resolve(true)
+    })
+    client.connect(parseInt(endpoint.port), endpoint.hostname, () => {
+      logger.info(`connected to printer ${uri}`)
+      client.write(Buffer.from(cmds.join('\r\n')))
+      client.end()
+    })
+  })
 }

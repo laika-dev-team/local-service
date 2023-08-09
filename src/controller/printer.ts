@@ -1,12 +1,14 @@
 import { ErrorCode, SystemError, printErrorMessage } from 'common/error'
-import { JOB_INTERVAL_MS, PRINTERS } from 'config'
+import { JOB_INTERVAL_MS, PRINTERS, STAMP_PRINTERS } from 'config'
 import { getLogger } from 'helper'
-import { JobQueue, executePrinter } from 'lib'
+import { JobQueue, executePrinter, executeRawPrinter } from 'lib'
 import { ThermalPrinter } from 'node-thermal-printer'
-import { receiptPrintRequest } from 'schema'
+import { receiptPrintRequest, stampPrintRequest } from 'schema'
 import { printReceipt } from 'template/receipt'
 import { z } from 'zod'
 import * as url from 'url'
+import dayjs from 'dayjs'
+import { removeVietnameseTones } from 'helper/string'
 
 export enum PrinterTemplate {
   RECEIPT = 'receipt',
@@ -22,14 +24,7 @@ export class PrinterController {
   }
 
   private _logger
-  private _queuesMap: Map<
-    string,
-    JobQueue<{
-      uri: string
-      template: PrinterTemplate
-      payload: any
-    }>
-  >
+  private _queuesMap: Map<string, JobQueue<any>>
   private _printerTemplateMap: Map<
     PrinterTemplate,
     (printer: ThermalPrinter, data: any) => Promise<void>
@@ -41,6 +36,14 @@ export class PrinterController {
     PRINTERS.forEach((p) => {
       const endpoint = new url.URL(p)
       const queue = new JobQueue(p, this.executePrint, {
+        jobIntervalMs: JOB_INTERVAL_MS,
+      })
+      this._queuesMap.set(endpoint.hostname, queue)
+      queue.start()
+    })
+    STAMP_PRINTERS.forEach((p) => {
+      const endpoint = new url.URL(p)
+      const queue = new JobQueue(p, this.executeRawPrint, {
         jobIntervalMs: JOB_INTERVAL_MS,
       })
       this._queuesMap.set(endpoint.hostname, queue)
@@ -66,6 +69,55 @@ export class PrinterController {
     return true
   }
 
+  printStamp = (input: z.infer<typeof stampPrintRequest>) => {
+    const { printerUri, stampData } = input
+    const printer = this._queuesMap.get(printerUri)
+    if (!printer) {
+      throw new SystemError(
+        ErrorCode.VALIDATION_ERROR,
+        printErrorMessage.NOT_FOUND_PRINTER
+      )
+    }
+    const time = dayjs(stampData.orderTime)
+    const cmdList = stampData.items.map((i) => {
+      const cmds = [
+        'SIZE 40 mm, 30mm',
+        'GAP 3 mm, 0',
+        'DIRECTION 1',
+        'CLS',
+        `TEXT 0,60,"3",0,1,1,"${removeVietnameseTones(stampData.storeName)}"`,
+        `TEXT 0,100,"1",0,1,1,"The       ${
+          stampData.table
+        } ${removeVietnameseTones(stampData.zone)}"`,
+        `TEXT 0,120,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY hh:mm')}"`,
+        `TEXT 0,150,"3",0,1,1,"${removeVietnameseTones(i.name)}"`,
+      ]
+      let y = 150
+      if (i.toppings) {
+        i.toppings.forEach((t) => {
+          y += 20
+          cmds.push(
+            `TEXT 0,${y},"1",0,1,1,"  + ${removeVietnameseTones(t.name)}"`
+          )
+        })
+      }
+      y += 20
+      cmds.push(
+        `TEXT 0,${y},"2",0,1,1,"Tong      ${i.price}"`,
+        `PRINT 1,1`,
+        `END`
+      )
+      return cmds
+    })
+    cmdList.forEach((cmds) => {
+      printer.append({
+        uri: printer.name,
+        cmds,
+      })
+    })
+    return true
+  }
+
   private executePrint = async (data: {
     uri: string
     template: PrinterTemplate
@@ -81,5 +133,13 @@ export class PrinterController {
     }
 
     return executePrinter(uri, payload as any, templateFunc)
+  }
+
+  private executeRawPrint = async (data: {
+    uri: string
+    cmds: string[]
+  }): Promise<void> => {
+    const { uri, cmds } = data
+    await executeRawPrinter(uri, cmds)
   }
 }

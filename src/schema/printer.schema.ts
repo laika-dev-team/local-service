@@ -39,7 +39,38 @@ export const receiptPrintPayload = z.object({
   }),
 })
 
+export const stampData = z.object({
+  storeName: z.string().nonempty(),
+  zone: z.string().nonempty(),
+  table: z.string().nonempty(),
+  orderId: z.string().nonempty(),
+  orderTime: z.number().positive(),
+  items: z.array(
+    z.object({
+      name: z.string().nonempty(),
+      quantity: z.number(),
+      unitPrice: z.number(),
+      price: z.number(),
+      discount: z.number().optional(),
+      toppings: z
+        .array(
+          z.object({
+            name: z.string().nonempty(),
+            quantity: z.number(),
+            unitPrice: z.number(),
+          })
+        )
+        .optional(),
+    })
+  ),
+})
+
 export const receiptPrintRequest = z.object({
   printerUri: z.string().nonempty(),
   receipData: receiptPrintPayload,
+})
+
+export const stampPrintRequest = z.object({
+  printerUri: z.string().nonempty(),
+  stampData: stampData,
 })
