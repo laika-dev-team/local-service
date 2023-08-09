@@ -80,30 +80,33 @@ export class PrinterController {
     }
     const time = dayjs(stampData.orderTime)
     const cmdList = stampData.items.map((i) => {
+      const x = 10
       const cmds = [
         'SIZE 40 mm, 30mm',
         'GAP 3 mm, 0',
         'DIRECTION 1',
         'CLS',
-        `TEXT 0,60,"3",0,1,1,"${removeVietnameseTones(stampData.storeName)}"`,
-        `TEXT 0,100,"1",0,1,1,"The       ${
+        `TEXT ${x},60,"3",0,1,1,"${removeVietnameseTones(
+          stampData.storeName
+        )}"`,
+        `TEXT ${x},100,"1",0,1,1,"The       ${
           stampData.table
         } ${removeVietnameseTones(stampData.zone)}"`,
-        `TEXT 0,120,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY hh:mm')}"`,
-        `TEXT 0,150,"3",0,1,1,"${removeVietnameseTones(i.name)}"`,
+        `TEXT ${x},120,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY hh:mm')}"`,
+        `TEXT ${x},150,"3",0,1,1,"${removeVietnameseTones(i.name)}"`,
       ]
       let y = 150
       if (i.toppings) {
         i.toppings.forEach((t) => {
           y += 20
           cmds.push(
-            `TEXT 0,${y},"1",0,1,1,"  + ${removeVietnameseTones(t.name)}"`
+            `TEXT ${x},${y},"1",0,1,1,"  + ${removeVietnameseTones(t.name)}"`
           )
         })
       }
-      y += 20
+      y += i.toppings ? 20 : 30
       cmds.push(
-        `TEXT 0,${y},"2",0,1,1,"Tong      ${i.price}"`,
+        `TEXT ${x},${y},"2",0,1,1,"Tong      ${i.price}"`,
         `PRINT 1,1`,
         `END`
       )
