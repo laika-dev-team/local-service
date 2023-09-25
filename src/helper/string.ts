@@ -6,11 +6,12 @@ export function convertToWpc1258(str: string) {
 }
 
 export function currencyToString(number: number): string {
-  let data = `${number}`
-  if (number > 10000) {
-    data = `${Math.round(number / 1000)}k`
-  }
-  return data
+  return `${number}`
+  // let data = `${number}`
+  // if (number > 10000) {
+  //   data = `${Math.round(number / 1000)}k`
+  // }
+  // return data
 }
 
 export function removeVietnameseTones(str: string) {

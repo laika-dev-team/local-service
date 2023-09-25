@@ -126,20 +126,20 @@ export async function printReceipt(
     },
     { align: 'RIGHT', width: 0.5, text: `${data.totalPrice}` },
   ])
-  printer.tableCustom([
-    {
-      align: 'LEFT',
-      width: 0.5,
-      bold: true,
-      text: removeVietnameseTones(`Tiền đưa ${data.pay.receive}`),
-    },
-    {
-      align: 'LEFT',
-      width: 0.5,
-      bold: true,
-      text: removeVietnameseTones(`Tiền thừa ${data.pay.giveBack || 0}`),
-    },
-  ])
+  // printer.tableCustom([
+  //   {
+  //     align: 'LEFT',
+  //     width: 0.5,
+  //     bold: true,
+  //     text: removeVietnameseTones(`Tiền đưa ${data.pay.receive}`),
+  //   },
+  //   {
+  //     align: 'LEFT',
+  //     width: 0.5,
+  //     bold: true,
+  //     text: removeVietnameseTones(`Tiền thừa ${data.pay.giveBack || 0}`),
+  //   },
+  // ])
   printer.drawLine()
   printer.alignCenter()
   printer.bold(true)
