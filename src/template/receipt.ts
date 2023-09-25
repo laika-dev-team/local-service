@@ -35,47 +35,40 @@ export async function printReceipt(
   printer.drawLine()
   printer.tableCustom([
     // { align: 'CENTER', width: 0.05, text: removeVietnameseTones('TT') },
-    { align: 'CENTER', width: 0.3, text: removeVietnameseTones('Tên món') },
-    { align: 'CENTER', width: 0.1, text: removeVietnameseTones('SL') },
-    { align: 'CENTER', width: 0.2, text: removeVietnameseTones('Đ.Giá') },
-    { align: 'CENTER', width: 0.1, text: removeVietnameseTones('C.Khấu') },
-    { align: 'CENTER', width: 0.2, text: removeVietnameseTones('T.Tiền') },
+    { align: 'LEFT', width: 0.3, text: removeVietnameseTones('Tên món') },
+    { align: 'LEFT', width: 0.1, text: removeVietnameseTones('SL') },
+    { align: 'LEFT', width: 0.2, text: removeVietnameseTones('Đ.Giá') },
+    { align: 'LEFT', width: 0.3, text: removeVietnameseTones('T.Tiền') },
   ])
   printer.drawLine()
   data.items.forEach((t, i) => {
     printer.tableCustom([
       // { align: 'RIGHT', width: 0.05, text: `${i + 1}` },
       {
-        align: 'CENTER',
+        align: 'LEFT',
         width: 0.3,
         text: removeVietnameseTones(`${t.name}`),
       },
-      { align: 'RIGHT', width: 0.1, text: `${t.quantity}` },
-      { align: 'RIGHT', width: 0.2, text: `${currencyToString(t.unitPrice)}` },
-      {
-        align: 'RIGHT',
-        width: 0.1,
-        text: `${t.discount ? `${t.discount}%` : 0}`,
-      },
-      { align: 'RIGHT', width: 0.2, text: `${currencyToString(t.price)}` },
+      { align: 'LEFT', width: 0.1, text: `${t.quantity}` },
+      { align: 'LEFT', width: 0.2, text: `${currencyToString(t.unitPrice)}` },
+      { align: 'LEFT', width: 0.3, text: `${currencyToString(t.price)}` },
     ])
     if (t.toppings) {
       t.toppings.forEach((t) => {
         printer.tableCustom([
           // { align: 'RIGHT', width: 0.05, text: ` ` },
           {
-            align: 'CENTER',
+            align: 'LEFT',
             width: 0.3,
             text: removeVietnameseTones(`+ ${t.name}`),
           },
-          { align: 'RIGHT', width: 0.1, text: `${t.quantity}` },
-          { align: 'RIGHT', width: 0.2, text: `${t.unitPrice}` },
+          { align: 'LEFT', width: 0.1, text: `${t.quantity}` },
+          { align: 'LEFT', width: 0.2, text: `${t.unitPrice}` },
           {
-            align: 'RIGHT',
+            align: 'LEFT',
             width: 0.1,
             text: `0`,
           },
-          { align: 'RIGHT', width: 0.1, text: `0` },
         ])
       })
     }
