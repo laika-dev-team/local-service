@@ -84,7 +84,7 @@ export async function printReceipt(
     {
       align: 'RIGHT',
       width: 0.5,
-      text: removeVietnameseTones(`${data.rawPrice}`),
+      text: removeVietnameseTones(`${currencyToString(data.rawPrice)}`),
       bold: true,
     },
   ])
@@ -116,7 +116,12 @@ export async function printReceipt(
       text: removeVietnameseTones('Thành tiền'),
       bold: true,
     },
-    { align: 'RIGHT', width: 0.5, text: `${data.totalPrice}`, bold: true },
+    {
+      align: 'RIGHT',
+      width: 0.5,
+      text: `${currencyToString(data.totalPrice)}`,
+      bold: true,
+    },
   ])
   printer.tableCustom([
     {
