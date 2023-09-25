@@ -30,7 +30,7 @@ export async function executePrinter<T>(
     throw new Error('PRINTER_IS_NOT_CONNECTEd')
   }
   await printTemplate(printer, data)
-  await printer.execute()
+  await printer.execute({ waitForResponse: true })
 }
 
 export function executeRawPrinter(

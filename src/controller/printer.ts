@@ -80,10 +80,10 @@ export class PrinterController {
     }
     const time = dayjs(stampData.orderTime)
     const cmdList = stampData.items.map((i) => {
-      const x = 10
+      const x = 20
       const cmds = [
         'SIZE 40 mm, 30mm',
-        'GAP 3 mm, 0',
+        'GAP 5 mm, 0',
         'DIRECTION 1',
         'CLS',
         `TEXT ${x},60,"3",0,1,1,"${removeVietnameseTones(
@@ -104,7 +104,7 @@ export class PrinterController {
           )
         })
       }
-      y += i.toppings ? 20 : 30
+      y += i.toppings && i.toppings.length > 0 ? 20 : 40
       cmds.push(
         `TEXT ${x},${y},"2",0,1,1,"Tong      ${i.price}"`,
         `PRINT 1,1`,
