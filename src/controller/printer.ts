@@ -8,7 +8,7 @@ import { printReceipt } from 'template/receipt'
 import { z } from 'zod'
 import * as url from 'url'
 import dayjs from 'dayjs'
-import { removeVietnameseTones } from 'helper/string'
+import { currencyToString, removeVietnameseTones } from 'helper/string'
 
 export enum PrinterTemplate {
   RECEIPT = 'receipt',
@@ -168,7 +168,7 @@ export class PrinterController {
     }
     y += toppings && toppings.length > 0 ? 20 : 40
     cmds.push(
-      `TEXT ${x},${y},"2",0,1,1,"Tong      ${price}"`,
+      `TEXT ${x},${y},"2",0,1,1,"Tong      ${currencyToString(price)}"`,
       `PRINT 1,1`,
       `END`
     )
