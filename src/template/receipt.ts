@@ -17,6 +17,8 @@ export async function printReceipt(
   printer.alignCenter()
   printer.bold(true)
   printer.println(removeVietnameseTones('Hoá đơn thanh toán'))
+  printer.println(removeVietnameseTones(`D/c: ${payload.store.address}`))
+  printer.println(removeVietnameseTones(`Hotline: ${payload.store.hotline}`))
   printer.bold(false)
   printer.leftRight(
     removeVietnameseTones(`Số HD: ${data.receiptId || ''}`),
