@@ -79,38 +79,20 @@ export class PrinterController {
       )
     }
     const time = dayjs(stampData.orderTime)
-    const cmdList = stampData.items.map((i) => {
-      const x = 20
-      const cmds = [
-        'SIZE 40 mm, 30mm',
-        'GAP 5 mm, 0',
-        'DIRECTION 1',
-        'CLS',
-        `TEXT ${x},60,"3",0,1,1,"${removeVietnameseTones(
-          stampData.storeName
-        )}"`,
-        `TEXT ${x},100,"1",0,1,1,"The       ${
-          stampData.table
-        } ${removeVietnameseTones(stampData.zone)}"`,
-        `TEXT ${x},120,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY hh:mm')}"`,
-        `TEXT ${x},150,"3",0,1,1,"${removeVietnameseTones(i.name)}"`,
-      ]
-      let y = 150
-      if (i.toppings) {
-        i.toppings.forEach((t) => {
-          y += 20
-          cmds.push(
-            `TEXT ${x},${y},"1",0,1,1,"  + ${removeVietnameseTones(t.name)}"`
-          )
-        })
+    const cmdList: Array<string[]> = []
+    stampData.items.forEach((i) => {
+      for (let q = 0; q < i.quantity; q++) {
+        cmdList.push(
+          this.stampCmdBuilder({
+            storeName: stampData.storeName,
+            time,
+            zone: stampData.zone,
+            table: stampData.table,
+            name: i.name,
+            price: i.unitPrice,
+          })
+        )
       }
-      y += i.toppings && i.toppings.length > 0 ? 20 : 40
-      cmds.push(
-        `TEXT ${x},${y},"2",0,1,1,"Tong      ${i.price}"`,
-        `PRINT 1,1`,
-        `END`
-      )
-      return cmds
     })
     cmdList.forEach((cmds) => {
       printer.append({
@@ -144,5 +126,52 @@ export class PrinterController {
   }): Promise<void> => {
     const { uri, cmds } = data
     await executeRawPrinter(uri, cmds)
+  }
+
+  private stampCmdBuilder = (data: {
+    storeName: string
+    table: string
+    zone: string
+    time: dayjs.Dayjs
+    name: string
+    price: number
+    toppings?:
+      | {
+          name: string
+          quantity: number
+          unitPrice: number
+        }[]
+      | undefined
+  }): string[] => {
+    const { name, price, toppings, storeName, table, zone, time } = data
+    const x = 20
+    const cmds = [
+      'SIZE 40 mm, 30mm',
+      'GAP 5 mm, 0',
+      'DIRECTION 1',
+      'CLS',
+      `TEXT ${x},60,"3",0,1,1,"${removeVietnameseTones(storeName)}"`,
+      `TEXT ${x},100,"1",0,1,1,"The       ${table} ${removeVietnameseTones(
+        zone
+      )}"`,
+      `TEXT ${x},120,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY hh:mm')}"`,
+      `TEXT ${x},150,"3",0,1,1,"${removeVietnameseTones(name)}"`,
+    ]
+    let y = 150
+    if (toppings) {
+      toppings.forEach((t) => {
+        y += 20
+        cmds.push(
+          `TEXT ${x},${y},"1",0,1,1,"  + ${removeVietnameseTones(t.name)}"`
+        )
+      })
+    }
+    y += toppings && toppings.length > 0 ? 20 : 40
+    cmds.push(
+      `TEXT ${x},${y},"2",0,1,1,"Tong      ${price}"`,
+      `PRINT 1,1`,
+      `END`
+    )
+    return cmds
   }
 }
