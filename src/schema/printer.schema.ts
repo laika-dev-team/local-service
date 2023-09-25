@@ -43,7 +43,7 @@ export const stampData = z.object({
   storeName: z.string().nonempty(),
   zone: z.string().nonempty(),
   table: z.string().nonempty(),
-  orderId: z.string().nonempty(),
+  orderId: z.number().positive(),
   orderTime: z.number().positive(),
   items: z.array(
     z.object({
