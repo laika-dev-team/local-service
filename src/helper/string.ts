@@ -6,7 +6,12 @@ export function convertToWpc1258(str: string) {
 }
 
 export function currencyToString(number: number): string {
-  return `${number}`
+  const config = {
+    style: 'currency',
+    currency: 'VND',
+    maximumFractionDigits: 9,
+  }
+  return new Intl.NumberFormat('vi-VN', config).format(number)
   // let data = `${number}`
   // if (number > 10000) {
   //   data = `${Math.round(number / 1000)}k`
