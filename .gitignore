@@ -7,3 +7,4 @@ tmp
 .env
 lib
 !src/lib
+ecosystem.config.js
