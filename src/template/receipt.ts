@@ -34,7 +34,7 @@ export async function printReceipt(
   )
   printer.drawLine()
   printer.tableCustom([
-    // { align: 'CENTER', width: 0.05, text: removeVietnameseTones('TT') },
+    { align: 'LEFT', width: 0.1, text: removeVietnameseTones('TT') },
     { align: 'LEFT', width: 0.3, text: removeVietnameseTones('Tên món') },
     { align: 'LEFT', width: 0.1, text: removeVietnameseTones('SL') },
     { align: 'LEFT', width: 0.2, text: removeVietnameseTones('Đ.Giá') },
@@ -43,7 +43,7 @@ export async function printReceipt(
   printer.drawLine()
   data.items.forEach((t, i) => {
     printer.tableCustom([
-      // { align: 'RIGHT', width: 0.05, text: `${i + 1}` },
+      { align: 'LEFT', width: 0.1, text: `${i + 1}` },
       {
         align: 'LEFT',
         width: 0.3,
