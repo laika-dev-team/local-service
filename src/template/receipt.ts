@@ -129,7 +129,11 @@ export async function printReceipt(
       width: 0.5,
       text: `+ ${removeVietnameseTones(orderPayToText(data.pay.type))}`,
     },
-    { align: 'RIGHT', width: 0.5, text: `${data.totalPrice}` },
+    {
+      align: 'RIGHT',
+      width: 0.5,
+      text: `${currencyToString(data.totalPrice)}`,
+    },
   ])
   // printer.tableCustom([
   //   {
