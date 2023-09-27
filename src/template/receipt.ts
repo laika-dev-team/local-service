@@ -29,8 +29,8 @@ export async function printReceipt(
     removeVietnameseTones(`Ngày: ${time.format('DD/MM/YYYY')}`)
   )
   printer.leftRight(
-    removeVietnameseTones(`Giờ vào: ${time.format('hh:mm')}`),
-    removeVietnameseTones(`Giờ ra:  ${time.format('hh:mm')}`)
+    removeVietnameseTones(`Giờ vào: ${time.format('HH:mm')}`),
+    removeVietnameseTones(`Giờ ra:  ${time.format('HH:mm')}`)
   )
   printer.drawLine()
   printer.tableCustom([
@@ -71,6 +71,11 @@ export async function printReceipt(
           },
         ])
       })
+    }
+    if (t.note) {
+      printer.tableCustom([
+        { align: 'LEFT', width: 0.7, text: `Note: ${t.note}` },
+      ])
     }
   })
   printer.drawLine()

@@ -90,6 +90,7 @@ export class PrinterController {
             table: stampData.table,
             name: i.name,
             price: i.unitPrice,
+            note: i.note,
           })
         )
       }
@@ -135,6 +136,7 @@ export class PrinterController {
     time: dayjs.Dayjs
     name: string
     price: number
+    note?: string
     toppings?:
       | {
           name: string
@@ -143,7 +145,7 @@ export class PrinterController {
         }[]
       | undefined
   }): string[] => {
-    const { name, price, toppings, storeName, table, zone, time } = data
+    const { name, price, toppings, storeName, table, zone, time, note } = data
     const x = 20
     const cmds = [
       'SIZE 40 mm, 30mm',
@@ -154,7 +156,7 @@ export class PrinterController {
       `TEXT ${x},100,"1",0,1,1,"The       ${table} ${removeVietnameseTones(
         zone
       )}"`,
-      `TEXT ${x},120,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY hh:mm')}"`,
+      `TEXT ${x},120,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY HH:mm')}"`,
       `TEXT ${x},150,"3",0,1,1,"${removeVietnameseTones(name)}"`,
     ]
     let y = 150
@@ -166,7 +168,11 @@ export class PrinterController {
         )
       })
     }
-    y += toppings && toppings.length > 0 ? 20 : 40
+    if (note) {
+      y += 20
+      cmds.push(`TEXT ${x},${y},"1",0,1,1,"  + ${removeVietnameseTones(note)}"`)
+    }
+    y += (toppings && toppings.length > 0) || note ? 20 : 40
     cmds.push(
       `TEXT ${x},${y},"2",0,1,1,"Tong      ${currencyToString(price)}"`,
       `PRINT 1,1`,

@@ -21,6 +21,7 @@ export const receiptPrintPayload = z.object({
       unitPrice: z.number(),
       price: z.number(),
       discount: z.number().optional(),
+      note: z.string().optional(),
       toppings: z
         .array(
           z.object({
@@ -52,6 +53,7 @@ export const stampData = z.object({
       unitPrice: z.number(),
       price: z.number(),
       discount: z.number().optional(),
+      note: z.string().optional(),
       toppings: z
         .array(
           z.object({
