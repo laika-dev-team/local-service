@@ -66,12 +66,12 @@ export class WsAgent {
     this._logger.debug('on conenction open')
     this._retry = 0
     this._pingInterval = setInterval(() => {
-      if (this._socket) this._socket.send('ping')
+      this.send('ping')
     }, 50000)
   }
 
   private onSocketClose = (code: number) => {
-    this._logger.debug(`on connection close with code ${code}`)
+    this._logger.info(`on connection close with code ${code}`)
     if (code === 1007) {
       this._isRunning = false
       this._logger.fatal('wrong connect validation')
@@ -83,7 +83,7 @@ export class WsAgent {
   }
 
   private onSocketError = (code: number) => {
-    this._logger.debug(`on connection error with code ${code}`)
+    this._logger.info(`on connection error with code ${code}`)
     if (code === 1007) {
       this._isRunning = false
       this._logger.fatal('wrong connect validation')
@@ -156,5 +156,18 @@ export class WsAgent {
   private retryDuration = (retryCount: number) => {
     const baseRetry = 5000
     return retryCount === 0 ? baseRetry : baseRetry * retryCount
+  }
+
+  private send = (data: string) => {
+    if (!this._socket) {
+      this._logger.warn('[ping] not have socket for send ping')
+      return
+    }
+    if (this._socket.readyState !== WebSocket.OPEN) {
+      this._logger.warn('[ping] socket connect is not opened')
+      return
+    }
+
+    this._socket.send(data)
   }
 }
