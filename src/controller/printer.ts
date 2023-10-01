@@ -152,27 +152,29 @@ export class PrinterController {
       'GAP 5 mm, 0',
       'DIRECTION 1',
       'CLS',
-      `TEXT ${x},60,"3",0,1,1,"${removeVietnameseTones(storeName)}"`,
-      `TEXT ${x},100,"1",0,1,1,"The       ${table} ${removeVietnameseTones(
+      `TEXT ${x},60,"2",0,1,1,"${removeVietnameseTones(storeName)}"`,
+      `TEXT ${x},90,"1",0,1,1,"The       ${table} ${removeVietnameseTones(
         zone
       )}"`,
-      `TEXT ${x},120,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY HH:mm')}"`,
-      `TEXT ${x},150,"3",0,1,1,"${removeVietnameseTones(name)}"`,
+      `TEXT ${x},110,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY HH:mm')}"`,
+      `TEXT ${x},140,"3",0,1,1,"${removeVietnameseTones(name)}"`,
     ]
-    let y = 150
+    let y = 140
     if (toppings) {
       toppings.forEach((t) => {
-        y += 20
+        y += 30
         cmds.push(
           `TEXT ${x},${y},"1",0,1,1,"  + ${removeVietnameseTones(t.name)}"`
         )
       })
     }
     if (note) {
-      y += 20
-      cmds.push(`TEXT ${x},${y},"1",0,1,1,"  + ${removeVietnameseTones(note)}"`)
+      y += 30
+      cmds.push(
+        `TEXT ${x},${y},"1",0,1,1,"  > Note: ${removeVietnameseTones(note)}"`
+      )
     }
-    y += (toppings && toppings.length > 0) || note ? 20 : 40
+    y += (toppings && toppings.length > 0) || note ? 30 : 50
     cmds.push(
       `TEXT ${x},${y},"2",0,1,1,"Tong      ${currencyToString(price)}"`,
       `PRINT 1,1`,
