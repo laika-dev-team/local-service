@@ -12,7 +12,7 @@ module.exports = {
         PRINTERS: 'tcp://192.168.1.234:9100',
         STAMP_PRINTERS: 'tcp://192.168.1.100:9100',
         INTERNAL_ACECSS_KEY: '',
-        POS_WS_URI: 'ws://localhost:3000/ws',
+        NATS_ENDPOINT: '127.0.0.1:4222',
         STORE_ID: 1,
         JOB_INTERVAL_MS: 500,
       },
