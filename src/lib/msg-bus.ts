@@ -26,7 +26,12 @@ export class MsgBus {
   }
 
   init = async () => {
-    this._connection = await connect({ servers: [NATS_EP] })
+    try {
+      this._connection = await connect({ servers: [NATS_EP] })
+    } catch (e) {
+      this._logger.fatal(e, 'error when connect to nats')
+      process.exit(-1)
+    }
   }
 
   publish = (channel: string, payload: any) => {

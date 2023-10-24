@@ -161,6 +161,10 @@ export class PrinterController {
       }
 
       await executePrinter(uri, payload as any, templateFunc)
+      LocalJobDelegate.Instance.sendJobResult(
+        id,
+        StoreLocalServiceJobStatus.done
+      )
     } catch (e) {
       LocalJobDelegate.Instance.sendJobResult(
         id,
