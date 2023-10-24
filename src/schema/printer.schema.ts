@@ -68,11 +68,13 @@ export const stampData = z.object({
 })
 
 export const receiptPrintRequest = z.object({
+  id: z.number().optional(),
   printerUri: z.string().nonempty(),
   receipData: receiptPrintPayload,
 })
 
 export const stampPrintRequest = z.object({
+  id: z.number().optional(),
   printerUri: z.string().nonempty(),
   stampData: stampData,
 })

@@ -24,9 +24,14 @@ export class JobQueue<T> {
     return this._name
   }
 
-  append = (data: Omit<T, 'id'>) => {
+  append = (data: Omit<T, 'id'> & { id?: number }) => {
     // this._logger.info(data, 'append job to queue')
-    this._queue.push({ ...data, id: Date.now(), retry: undefined } as any)
+    const { id, ...payload } = data
+    this._queue.push({
+      ...payload,
+      id: id || Date.now(),
+      retry: undefined,
+    } as any)
     this.intervalExecute()
   }
 

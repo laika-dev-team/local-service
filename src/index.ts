@@ -1,5 +1,9 @@
 import { NATS_EP, STORE_ID } from 'config'
-import { PrinterController } from 'controller'
+import {
+  LocalJobDelegate,
+  PrinterController,
+  StoreLocalServiceJobStatus,
+} from 'controller'
 import { getLogger } from 'helper'
 import { MsgBus } from 'lib/msg-bus'
 import { receiptPrintRequest, stampPrintRequest } from 'schema'
@@ -14,6 +18,12 @@ const actionBuilder = (
       const payload = schema.parse(data)
       return action(payload)
     } catch (e) {
+      if (data.id)
+        LocalJobDelegate.Instance.sendJobResult(
+          data.id,
+          StoreLocalServiceJobStatus.error,
+          (e as Error).message
+        )
       throw e
     }
   }

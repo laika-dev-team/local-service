@@ -27,10 +27,10 @@ export async function executePrinter<T>(
   })
   const isConnected = await printer.isPrinterConnected()
   if (!isConnected) {
-    throw new Error('PRINTER_IS_NOT_CONNECTEd')
+    throw new Error('PRINTER_IS_NOT_CONNECTED')
   }
   await printTemplate(printer, data)
-  await printer.execute({ waitForResponse: true })
+  printer.execute()
 }
 
 export function executeRawPrinter(

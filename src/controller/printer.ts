@@ -1,5 +1,5 @@
 import { ErrorCode, SystemError, printErrorMessage } from 'common/error'
-import { JOB_INTERVAL_MS, PRINTERS, STAMP_PRINTERS } from 'config'
+import { JOB_INTERVAL_MS, NATS_EP, PRINTERS, STAMP_PRINTERS } from 'config'
 import { getLogger } from 'helper'
 import { JobQueue, executePrinter, executeRawPrinter } from 'lib'
 import { ThermalPrinter } from 'node-thermal-printer'
@@ -9,9 +9,42 @@ import { z } from 'zod'
 import * as url from 'url'
 import dayjs from 'dayjs'
 import { currencyToString, removeVietnameseTones } from 'helper/string'
+import { MsgBus } from 'lib/msg-bus'
 
 export enum PrinterTemplate {
   RECEIPT = 'receipt',
+}
+
+export enum StoreLocalServiceJobStatus {
+  prepare = 'prepare',
+  in_queue = 'in_queue',
+  done = 'done',
+  error = 'error',
+}
+
+export class LocalJobDelegate {
+  private static _instance: LocalJobDelegate | null
+  static get Instance(): LocalJobDelegate {
+    if (!this._instance) {
+      this._instance = new LocalJobDelegate()
+    }
+
+    return this._instance
+  }
+
+  sendJobResult = (
+    id: number,
+    status: StoreLocalServiceJobStatus,
+    error?: string
+  ) => {
+    if (!NATS_EP) return
+
+    MsgBus.Instance.publish('local-service.job', {
+      id,
+      status,
+      error,
+    })
+  }
 }
 
 export class PrinterController {
@@ -53,7 +86,7 @@ export class PrinterController {
   }
 
   printReceipt = (input: z.infer<typeof receiptPrintRequest>) => {
-    const { printerUri, receipData } = input
+    const { id, printerUri, receipData } = input
     const printer = this._queuesMap.get(printerUri)
     if (!printer) {
       throw new SystemError(
@@ -62,15 +95,22 @@ export class PrinterController {
       )
     }
     printer.append({
+      id,
       uri: printer.name,
       template: PrinterTemplate.RECEIPT,
       payload: receipData,
     })
+    if (id) {
+      LocalJobDelegate.Instance.sendJobResult(
+        id,
+        StoreLocalServiceJobStatus.in_queue
+      )
+    }
     return true
   }
 
   printStamp = (input: z.infer<typeof stampPrintRequest>) => {
-    const { printerUri, stampData } = input
+    const { id, printerUri, stampData } = input
     const printer = this._queuesMap.get(printerUri)
     if (!printer) {
       throw new SystemError(
@@ -105,20 +145,29 @@ export class PrinterController {
   }
 
   private executePrint = async (data: {
+    id: number
     uri: string
     template: PrinterTemplate
     payload: any
   }): Promise<void> => {
-    const { uri, template, payload } = data
-    const templateFunc = this._printerTemplateMap.get(template)
-    if (!templateFunc) {
-      throw new SystemError(
-        ErrorCode.INTERNAL_SYS_ERROR,
-        printErrorMessage.UNSUPPORTED_TEMPLATE
+    const { id, uri, template, payload } = data
+    try {
+      const templateFunc = this._printerTemplateMap.get(template)
+      if (!templateFunc) {
+        throw new SystemError(
+          ErrorCode.INTERNAL_SYS_ERROR,
+          printErrorMessage.UNSUPPORTED_TEMPLATE
+        )
+      }
+
+      await executePrinter(uri, payload as any, templateFunc)
+    } catch (e) {
+      LocalJobDelegate.Instance.sendJobResult(
+        id,
+        StoreLocalServiceJobStatus.error,
+        (e as Error).message
       )
     }
-
-    return executePrinter(uri, payload as any, templateFunc)
   }
 
   private executeRawPrint = async (data: {
