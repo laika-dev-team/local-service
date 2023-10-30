@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { NATS_EP } from 'config'
 import { getLogger } from 'helper'
-import { connect, NatsConnection, JSONCodec } from 'nats'
+import { connect, NatsConnection, JSONCodec, Events } from 'nats'
 
 export interface IMsgBusSubcriberAction {
   action: () => Promise<void>
@@ -27,7 +27,11 @@ export class MsgBus {
 
   init = async () => {
     try {
-      this._connection = await connect({ servers: [NATS_EP] })
+      this._connection = await connect({
+        servers: [NATS_EP],
+        maxReconnectAttempts: -1,
+        reconnect: true,
+      })
     } catch (e) {
       this._logger.fatal(e, 'error when connect to nats')
       process.exit(-1)
