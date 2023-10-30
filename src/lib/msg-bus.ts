@@ -32,6 +32,7 @@ export class MsgBus {
         maxReconnectAttempts: -1,
         reconnect: true,
       })
+      this.statusCheck()
     } catch (e) {
       this._logger.fatal(e, 'error when connect to nats')
       process.exit(-1)
@@ -64,6 +65,28 @@ export class MsgBus {
     return {
       action,
       close: () => subscriber.unsubscribe(),
+    }
+  }
+
+  statusCheck = async () => {
+    if (!this._connection) {
+      this._logger.fatal('not have nats connection....')
+      throw new Error('Not have connection')
+    }
+    for await (const s of this._connection.status()) {
+      switch (s.type) {
+        case Events.Disconnect:
+          this._logger.info(s.data, 'nats connection is disconnected....')
+          break
+        case Events.Error:
+          this._logger.info(s.data, 'nats connection is errored...')
+          break
+        case Events.Reconnect:
+          this._logger.info(s.data, 'nats is reconnecting')
+          break
+        default:
+          break
+      }
     }
   }
 }
