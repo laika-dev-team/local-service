@@ -24,10 +24,12 @@ export async function printReceipt(
     removeVietnameseTones(`Số HD: ${data.receiptId || ''}`),
     removeVietnameseTones(`TN: ${data.staff}`)
   )
+  printer.bold(true)
   printer.leftRight(
     removeVietnameseTones(`Bàn: ${data.zone} - ${data.table}`),
     removeVietnameseTones(`Ngày: ${time.format('DD/MM/YYYY')}`)
   )
+  printer.bold(false)
   printer.leftRight(
     removeVietnameseTones(`Giờ vào: ${time.format('HH:mm')}`),
     removeVietnameseTones(`Giờ ra:  ${time.format('HH:mm')}`)
@@ -113,28 +115,6 @@ export async function printReceipt(
       bold: true,
     },
   ])
-  if (data.vat) {
-    printer.tableCustom([
-      {
-        align: 'LEFT',
-        width: 0.1,
-        text: removeVietnameseTones('+'),
-        bold: true,
-      },
-      {
-        align: 'LEFT',
-        width: 0.4,
-        text: removeVietnameseTones('VAT: '),
-        bold: true,
-      },
-      {
-        align: 'RIGHT',
-        width: 0.4,
-        text: removeVietnameseTones(`${data.vat}%`),
-        bold: true,
-      },
-    ])
-  }
   printer.drawLine()
   printer.tableCustom([
     {
