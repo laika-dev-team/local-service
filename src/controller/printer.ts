@@ -205,11 +205,11 @@ export class PrinterController {
       'GAP 5 mm, 0',
       'DIRECTION 1',
       'CLS',
-      `TEXT ${x},60,"2",0,1,1,"${removeVietnameseTones(storeName)}"`,
-      `TEXT ${x},90,"2",0,1,1,"The       ${table} ${removeVietnameseTones(
+      `TEXT ${x},60,"1",0,1,1,"${removeVietnameseTones(storeName)}"`,
+      `TEXT ${x},80,"2",0,1,1,"The       ${table} ${removeVietnameseTones(
         zone
       )}"`,
-      `TEXT ${x},120,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY HH:mm')}"`,
+      `TEXT ${x},110,"1",0,1,1,"Ngay gio  ${time.format('DD/MM/YY HH:mm')}"`,
       `TEXT ${x},140,"3",0,1,1,"${removeVietnameseTones(name)}"`,
     ]
     let y = 140
