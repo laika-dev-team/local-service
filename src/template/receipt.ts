@@ -113,6 +113,28 @@ export async function printReceipt(
       bold: true,
     },
   ])
+  if (data.vat) {
+    printer.tableCustom([
+      {
+        align: 'LEFT',
+        width: 0.1,
+        text: removeVietnameseTones('+'),
+        bold: true,
+      },
+      {
+        align: 'LEFT',
+        width: 0.4,
+        text: removeVietnameseTones('VAT: '),
+        bold: true,
+      },
+      {
+        align: 'RIGHT',
+        width: 0.4,
+        text: removeVietnameseTones(`${data.vat}%`),
+        bold: true,
+      },
+    ])
+  }
   printer.drawLine()
   printer.tableCustom([
     {

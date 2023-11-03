@@ -35,6 +35,7 @@ export type ReceiptTemplateData = {
   rawPrice: number
   totalPrice: number
   discount?: number
+  vat?: number
   pay: {
     type: OrderPayTypeEnum
     receive: number

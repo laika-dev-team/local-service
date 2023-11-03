@@ -10,6 +10,7 @@ export const receiptPrintPayload = z.object({
   totalPrice: z.number(),
   rawPrice: z.number(),
   discount: z.number().optional(),
+  vat: z.number().optional(),
   store: z.object({
     address: z.string().nonempty(),
     hotline: z.string().nonempty(),
