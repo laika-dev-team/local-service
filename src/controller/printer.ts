@@ -226,7 +226,7 @@ export class PrinterController {
     if (note) {
       y += 30
       cmds.push(
-        `TEXT ${x},${y},"1",0,1,1,"  > Note: ${removeVietnameseTones(note)}"`
+        `TEXT ${x},${y},"1",0,1,1,"> Note: ${removeVietnameseTones(note)}"`
       )
     }
     y += (toppings && toppings.length > 0) || note ? 30 : 50
