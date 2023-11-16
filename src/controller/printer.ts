@@ -128,6 +128,7 @@ export class PrinterController {
             time,
             zone: stampData.zone,
             table: stampData.table,
+            toppings: i.toppings,
             name: i.name,
             price: i.unitPrice,
             note: i.note,
@@ -198,6 +199,7 @@ export class PrinterController {
         }[]
       | undefined
   }): string[] => {
+    console.log(data)
     const { name, price, toppings, storeName, table, zone, time, note } = data
     const x = 20
     const cmds = [
