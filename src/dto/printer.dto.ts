@@ -46,3 +46,10 @@ export type ReceiptTemplateData = {
   zone: string
   table: string
 }
+
+export type DailyTemplateData = {
+  address: string
+  employeeName: string
+  totalRevenue: number
+  totalDiscount: number
+}

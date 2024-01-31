@@ -2,6 +2,7 @@ import { PrinterController } from 'controller'
 import { FastifyInstance } from 'fastify'
 import {
   ErrorSchemaWithCode,
+  dailyReceiptPrintRequest,
   receiptPrintRequest,
   stampPrintRequest,
   statusResponse,
@@ -44,6 +45,26 @@ module.exports = function (fastify: FastifyInstance, opts: any, done: any) {
     (req, reply) => {
       const data = stampPrintRequest.parse(req.body)
       PrinterController.Instance.printStamp(data)
+      reply.status(200).send({ status: true })
+    }
+  )
+
+  fastify.post(
+    '/daily-receipt',
+    {
+      ...option,
+      schema: {
+        tags,
+        body: dailyReceiptPrintRequest,
+        response: {
+          ...ErrorSchemaWithCode,
+          200: statusResponse,
+        },
+      },
+    },
+    (req, reply) => {
+      const data = dailyReceiptPrintRequest.parse(req.body)
+      PrinterController.Instance.printDailyReceipt(data)
       reply.status(200).send({ status: true })
     }
   )

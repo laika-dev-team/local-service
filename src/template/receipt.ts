@@ -79,6 +79,11 @@ export async function printReceipt(
         { align: 'LEFT', width: 0.7, text: `Note: ${t.note}` },
       ])
     }
+    if (t.discount) {
+      printer.tableCustom([
+        { align: 'LEFT', width: 0.7, text: `CK: ${t.discount}%` },
+      ])
+    }
   })
   printer.drawLine()
   printer.tableCustom([

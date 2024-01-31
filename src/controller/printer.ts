@@ -3,16 +3,22 @@ import { JOB_INTERVAL_MS, NATS_EP, PRINTERS, STAMP_PRINTERS } from 'config'
 import { getLogger } from 'helper'
 import { JobQueue, executePrinter, executeRawPrinter } from 'lib'
 import { ThermalPrinter } from 'node-thermal-printer'
-import { receiptPrintRequest, stampPrintRequest } from 'schema'
+import {
+  dailyReceiptPrintRequest,
+  receiptPrintRequest,
+  stampPrintRequest,
+} from 'schema'
 import { printReceipt } from 'template/receipt'
 import { z } from 'zod'
 import * as url from 'url'
 import dayjs from 'dayjs'
 import { currencyToString, removeVietnameseTones } from 'helper/string'
 import { MsgBus } from 'lib/msg-bus'
+import { printDailyReceipt } from 'template/daily-receipt'
 
 export enum PrinterTemplate {
   RECEIPT = 'receipt',
+  DAILY_RECEIPT = 'daily-receipt',
 }
 
 export enum StoreLocalServiceJobStatus {
@@ -83,6 +89,10 @@ export class PrinterController {
       queue.start()
     })
     this._printerTemplateMap.set(PrinterTemplate.RECEIPT, printReceipt)
+    this._printerTemplateMap.set(
+      PrinterTemplate.DAILY_RECEIPT,
+      printDailyReceipt
+    )
   }
 
   printReceipt = (input: z.infer<typeof receiptPrintRequest>) => {
@@ -98,6 +108,30 @@ export class PrinterController {
       id,
       uri: printer.name,
       template: PrinterTemplate.RECEIPT,
+      payload: receipData,
+    })
+    if (id) {
+      LocalJobDelegate.Instance.sendJobResult(
+        id,
+        StoreLocalServiceJobStatus.in_queue
+      )
+    }
+    return true
+  }
+
+  printDailyReceipt = (input: z.infer<typeof dailyReceiptPrintRequest>) => {
+    const { id, printerUri, receipData } = input
+    const printer = this._queuesMap.get(printerUri)
+    if (!printer) {
+      throw new SystemError(
+        ErrorCode.VALIDATION_ERROR,
+        printErrorMessage.NOT_FOUND_PRINTER
+      )
+    }
+    printer.append({
+      id,
+      uri: printer.name,
+      template: PrinterTemplate.DAILY_RECEIPT,
       payload: receipData,
     })
     if (id) {
@@ -229,12 +263,12 @@ export class PrinterController {
         `TEXT ${x},${y},"1",0,1,1,"> Note: ${removeVietnameseTones(note)}"`
       )
     }
-    y += (toppings && toppings.length > 0) || note ? 30 : 50
-    cmds.push(
-      `TEXT ${x},${y},"2",0,1,1,"Tong      ${currencyToString(price)}"`,
-      `PRINT 1,1`,
-      `END`
-    )
+    // y += (toppings && toppings.length > 0) || note ? 30 : 50
+    // cmds.push(
+    //   `TEXT ${x},${y},"2",0,1,1,"Tong      ${currencyToString(price)}"`,
+    //   `PRINT 1,1`,
+    //   `END`
+    // )
     return cmds
   }
 }
