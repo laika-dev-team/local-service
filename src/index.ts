@@ -6,7 +6,11 @@ import {
 } from 'controller'
 import { getLogger } from 'helper'
 import { MsgBus } from 'lib/msg-bus'
-import { receiptPrintRequest, stampPrintRequest } from 'schema'
+import {
+  dailyReceiptPrintRequest,
+  receiptPrintRequest,
+  stampPrintRequest,
+} from 'schema'
 import { HttpServer } from 'server'
 import { z } from 'zod'
 const actionBuilder = (
@@ -50,5 +54,14 @@ const actionBuilder = (
       actionBuilder(stampPrintRequest, PrinterController.Instance.printStamp)
     )
     stampPrintAction.action()
+
+    const dailyReceiptPrintAction = MsgBus.Instance.subcribe(
+      `print-daily-receipt.${STORE_ID}`,
+      actionBuilder(
+        dailyReceiptPrintRequest,
+        PrinterController.Instance.printDailyReceipt
+      )
+    )
+    dailyReceiptPrintAction.action()
   }
 })()
