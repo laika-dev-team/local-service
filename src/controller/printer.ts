@@ -96,7 +96,7 @@ export class PrinterController {
   }
 
   printReceipt = (input: z.infer<typeof receiptPrintRequest>) => {
-    const { id, printerUri, receipData } = input
+    const { id, printerUri, receiptData } = input
     const printer = this._queuesMap.get(printerUri)
     if (!printer) {
       throw new SystemError(
@@ -108,7 +108,7 @@ export class PrinterController {
       id,
       uri: printer.name,
       template: PrinterTemplate.RECEIPT,
-      payload: receipData,
+      payload: receiptData,
     })
     if (id) {
       LocalJobDelegate.Instance.sendJobResult(
@@ -120,7 +120,7 @@ export class PrinterController {
   }
 
   printDailyReceipt = (input: z.infer<typeof dailyReceiptPrintRequest>) => {
-    const { id, printerUri, receipData } = input
+    const { id, printerUri, receiptData } = input
     const printer = this._queuesMap.get(printerUri)
     if (!printer) {
       throw new SystemError(
@@ -132,7 +132,7 @@ export class PrinterController {
       id,
       uri: printer.name,
       template: PrinterTemplate.DAILY_RECEIPT,
-      payload: receipData,
+      payload: receiptData,
     })
     if (id) {
       LocalJobDelegate.Instance.sendJobResult(

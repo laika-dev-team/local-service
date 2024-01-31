@@ -48,6 +48,7 @@ export type ReceiptTemplateData = {
 }
 
 export type DailyTemplateData = {
+  shiftDate: string
   address: string
   employeeName: string
   totalRevenue: number

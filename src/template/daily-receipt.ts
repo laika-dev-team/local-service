@@ -21,6 +21,20 @@ export async function printDailyReceipt(
     {
       align: 'LEFT',
       width: 0.5,
+      text: removeVietnameseTones('Ca:'),
+      bold: true,
+    },
+    {
+      align: 'RIGHT',
+      width: 0.5,
+      text: removeVietnameseTones(`${data.shiftDate}`),
+      bold: true,
+    },
+  ])
+  printer.tableCustom([
+    {
+      align: 'LEFT',
+      width: 0.5,
       text: removeVietnameseTones('Địa chỉ:'),
       bold: true,
     },

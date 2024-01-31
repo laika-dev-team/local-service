@@ -69,6 +69,7 @@ export const stampData = z.object({
 })
 
 export const dailyReceiptData = z.object({
+  shiftDate: z.string().nonempty(),
   address: z.string().nonempty(),
   employeeName: z.string().nonempty(),
   totalRevenue: z.number().positive(),
@@ -78,7 +79,7 @@ export const dailyReceiptData = z.object({
 export const receiptPrintRequest = z.object({
   id: z.number().optional(),
   printerUri: z.string().nonempty(),
-  receipData: receiptPrintPayload,
+  receiptData: receiptPrintPayload,
 })
 
 export const stampPrintRequest = z.object({
@@ -90,5 +91,5 @@ export const stampPrintRequest = z.object({
 export const dailyReceiptPrintRequest = z.object({
   id: z.number().optional(),
   printerUri: z.string().nonempty(),
-  receipData: dailyReceiptData,
+  receiptData: dailyReceiptData,
 })
