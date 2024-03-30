@@ -237,6 +237,7 @@ export class PrinterController {
     const { name, price, toppings, storeName, table, zone, time, note } = data
     const x = 20
     const cmds = [
+      '<ESC>!R',
       'SIZE 40 mm, 30mm',
       'GAP 5 mm, 0',
       'DIRECTION 1',
@@ -264,11 +265,11 @@ export class PrinterController {
       )
     }
     // y += (toppings && toppings.length > 0) || note ? 30 : 50
-    // cmds.push(
-    //   `TEXT ${x},${y},"2",0,1,1,"Tong      ${currencyToString(price)}"`,
-    //   `PRINT 1,1`,
-    //   `END`
-    // )
+    cmds.push(
+      // `TEXT ${x},${y},"2",0,1,1,"Tong      ${currencyToString(price)}"`,
+      `PRINT 1,1`,
+      `END`
+    )
     return cmds
   }
 }
