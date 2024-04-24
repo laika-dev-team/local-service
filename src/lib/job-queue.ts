@@ -57,6 +57,7 @@ export class JobQueue<T> {
     try {
       assert(data, 'data must exist')
       // this._logger.debug(data, 'execute job')
+      this._logger.warn(data, `execute job ${this._name}`)
       await this._action(data)
     } catch (e) {
       this._logger.error(e, 'process error ')

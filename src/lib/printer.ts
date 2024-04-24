@@ -50,6 +50,7 @@ export function executeRawPrinter(
     })
     client.connect(parseInt(endpoint.port), endpoint.hostname, () => {
       logger.info(`connected to printer ${uri}`)
+      logger.warn(cmds, '[debug] print command')
       client.write(Buffer.from(cmds.join('\r\n')), (e) => {
         // console.log('print result...', e)
         if (e) {

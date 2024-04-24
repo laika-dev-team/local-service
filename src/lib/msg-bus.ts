@@ -54,6 +54,7 @@ export class MsgBus {
       for await (const m of subscriber) {
         const msg: T = this._jc.decode(m.data) as T
         this._logger.debug(msg, `on message `)
+        this._logger.warn(msg, `got a msg from ${channel}`)
         try {
           await callback(msg)
         } catch (e) {
